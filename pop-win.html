@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>bootstrap-popwin</title>
+  <link rel="stylesheet" href="css/lib/bootstrap.min.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+  <button type="button" class="btn btn-lg btn-primary center-block" data-toggle="modal" data-target="#myPopwin" >CLick it and open the pop-win</button>
+
+  <!--弹窗部分：-->
+  <div class="modal fade" id="myPopwin" tabindex="-1"role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Login</h4>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-4">
+            <img src="img/login.jpg" width="100%">
+          </div>
+          <div class="form-box col-md-8">
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label for="InputEmail" class="col-md-3">Email:</label>
+                <div class="col-md-9">
+                  <input type="email" id="InputEmail" class="form-control" placeholder="Email">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="InputPassword" class="col-md-3">Password:</label>
+                <div class="col-md-9">
+                  <input type="password" id="InputPassword" class="form-control" placeholder="password">
+                </div>
+              </div>
+              <div class="captcha-box">
+                <div class=" form-group">
+                  <label for="mobile" class="col-md-3">Number:</label>
+                  <div class="col-md-9">
+                    <input type="text" id="mobile" class="form-control" placeholder="telephone number">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-7">
+                    <input type="text" class="form-control" maxlength="11" placeholder="请输入验证码">
+                  </div>
+                  <div class="col-md-5">
+                    <input type="button" id="getting"  class="form-control" value="获取验证码">
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="center-block submit-box">
+                  <button type="submit" class="btn btn-warning">注册</button>
+                  <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="js/lib/jquery-2.1.1.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/jquery.cookie.js"></script>
+<script>
+  $(function(){
+    /*仿刷新：检测是否存在cookie*/
+    if($.cookie("captcha")){
+      var count = $.cookie("captcha");
+      var btn = $('#getting');
+      btn.val(count+'秒后可重新获取').attr('disabled',true).css('cursor','not-allowed');
+      var resend = setInterval(function(){
+        count--;
+        if (count > 0){
+          btn.val(count+'秒后可重新获取').attr('disabled',true).css('cursor','not-allowed');
+          $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+        }else {
+          clearInterval(resend);
+          btn.val("获取验证码").removeClass('disabled').removeAttr('disabled style');
+        }
+      }, 1000);
+    }
+    /*点击改变按钮状态，已经简略掉ajax发送短信验证的代码*/
+    $('#getting').click(function(){
+      var btn = $(this);
+      var count = 60;
+      var resend = setInterval(function(){
+        count--;
+        if (count > 0){
+          btn.val(count+"秒后可重新获取");
+          $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+        }else {
+          clearInterval(resend);
+          btn.val("获取验证码").removeAttr('disabled style');
+        }
+      }, 1000);
+      btn.attr('disabled',true).css('cursor','not-allowed');
+    });
+  });
+</script>
+</html>
